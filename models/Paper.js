@@ -33,7 +33,7 @@ const PaperSchema = new mongoose.Schema({
     },
     end_date: {
         type: Date, 
-        required: [true, "Please provide a end date"]
+        // required: [true, "Please provide a end date"]
     },
     status_p: {
         type: String,
