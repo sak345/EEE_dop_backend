@@ -1,3 +1,5 @@
+var {Parser} = require('json2csv');
+
 const Paper = require("../models/Paper");
 const User = require("../models/User");
 
@@ -188,4 +190,134 @@ exports.deleteuser = async (req, res, next) => {
         })
     }
     
+}
+
+const helper = (obj ,key) => {
+    if (obj[key]) {
+        return obj[key]
+    }
+    else {
+        return ""
+    }
+}
+
+const dateHelper = (obj ,key) => {
+    if (obj[key]) {
+        date = new Date(obj[key])
+        const yyyy = date.getFullYear();
+        let mm = date.getMonth() + 1; 
+        let dd = date.getDate();
+        return (yyyy + "-"+ mm + "-"+ dd)
+    }
+    else {
+        return ""
+    }
+}
+exports.downloadPapers = async (req, res, next) => {
+    if (!req.body["start_date"] || !req.body["end_date"] || !req.body["status"]){
+        return res.status(422).json({
+                success: false,
+                message: "No start_date or end_date or status found"
+            })
+    }
+    start = new Date(req.body["start_date"])
+    end = new Date(req.body["end_date"])
+    try {
+        results = []
+        papers = null
+        if (req.body["status"] == "submitted") {
+            papers = await Paper.find({
+                'submission_date': {
+                    '$gte': start, 
+                    '$lt': end
+                }
+            })
+        } else if(req.body["status"] == "accepted") {
+            papers = await Paper.find({
+                'submission_date': {
+                    '$gte': start, 
+                    '$lt': end
+                },
+                'status_p': {
+                    '$eq': "accepted"
+                }
+            })
+        } else if(req.body["status"] == "completed") {
+             papers = await Paper.find({
+                'submission_date': {
+                    '$gte': start, 
+                    '$lt': end
+                },
+                'project_stage': {
+                    '$eq': "completed"
+                }
+            })
+        } else if(req.body["status"] == "ongoing") {
+             papers = await Paper.find({
+                'submission_date': {
+                    '$gte': start, 
+                    '$lt': end
+                },
+                'project_stage': {
+                    '$eq': "ongoing"
+                }
+            })
+        } 
+        else {
+            return res.status(422).json({
+                success: false,
+                message: "status can only be submitted, accepted, ongoing or completed"
+            })
+        }
+
+        papers.forEach((paper) => {
+            let row = {
+                "title": helper(paper, "title"),
+                "funding_agency": helper(paper, "funding_agency"),
+                "agency_type": helper(paper, "agency_type"),
+                "PI": helper(paper, "PI"),
+                "coPI": helper(paper, "coPI"),
+                "amount": helper(paper, "amount"),
+                "submission_date": dateHelper(paper, "submission_date"),
+                "end_date": dateHelper(paper, "end_date"),
+                "status_p": helper(paper, "status_p"),
+                "project_stage": helper(paper, "project_stage"),
+                "start_date": dateHelper(paper, "start_date"),
+                "completed_date": dateHelper(paper, "completed_date")
+            }
+            results.push(row)
+        })
+
+        const fields = [ "title",
+                "funding_agency",
+                "agency_type",
+                "PI",
+                "coPI",
+                "amount",
+                "submission_date",
+                "end_date",
+                "status_p",
+                "project_stage",
+                "start_date",
+                "completed_date"]
+
+        const csvParser = new Parser({fields})
+        const csvData = csvParser.parse(results)
+
+        if (!papers.length) {
+            return res.status(404).json({
+                success: false,
+                message: "No paper Found"
+            })
+        } else {
+            res.setHeader("Content-Type", "text/csv");
+            res.setHeader("Content-Disposition", "attachment: filename=papers.csv");
+            return res.status(200).end(csvData)
+        }   
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            err: error
+        })
+    }
 }
