@@ -42,6 +42,9 @@ const PaperSchema = new mongoose.Schema({
     project_stage: {
         type: String
     },
+    approved_date: {
+        type: Date,
+    },
     start_date: {
         type: Date
     },
