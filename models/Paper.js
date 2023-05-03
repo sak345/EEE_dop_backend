@@ -39,9 +39,7 @@ const PaperSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide a status"],
     },
-    project_stage: {
-        type: String
-    },
+
     approved_date: {
         type: Date,
     },

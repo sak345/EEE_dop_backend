@@ -248,7 +248,7 @@ exports.downloadPapers = async (req, res, next) => {
                     '$gte': start, 
                     '$lt': end
                 },
-                'project_stage': {
+                'status_p': {
                     '$eq': "completed"
                 }
             })
@@ -258,7 +258,7 @@ exports.downloadPapers = async (req, res, next) => {
                     '$gte': start, 
                     '$lt': end
                 },
-                'project_stage': {
+                'status_p': {
                     '$eq': "ongoing"
                 }
             })
@@ -281,7 +281,6 @@ exports.downloadPapers = async (req, res, next) => {
                 "submission_date": dateHelper(paper, "submission_date"),
                 "end_date": dateHelper(paper, "end_date"),
                 "status_p": helper(paper, "status_p"),
-                "project_stage": helper(paper, "project_stage"),
                 "start_date": dateHelper(paper, "start_date"),
                 "completed_date": dateHelper(paper, "completed_date")
             }
@@ -297,7 +296,6 @@ exports.downloadPapers = async (req, res, next) => {
                 "submission_date",
                 "end_date",
                 "status_p",
-                "project_stage",
                 "start_date",
                 "completed_date"]
 
