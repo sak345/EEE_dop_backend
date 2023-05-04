@@ -225,11 +225,21 @@ exports.downloadPapers = async (req, res, next) => {
     try {
         results = []
         papers = null
-        if (req.body["status"] == "submitted") {
+        if (req.body["status"] == "all") {
             papers = await Paper.find({
                 'submission_date': {
                     '$gte': start, 
                     '$lt': end
+                }
+            })
+        } else if (req.body["status"] == "submitted") {
+            papers = await Paper.find({
+                'submission_date': {
+                    '$gte': start, 
+                    '$lt': end
+                },
+                'status_p': {
+                    '$eq': "submitted"
                 }
             })
         } else if(req.body["status"] == "accepted") {
