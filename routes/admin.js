@@ -6,7 +6,7 @@ const {getall, getone, create, updateuser, getalluser, getoneuser, deleteuser, d
 
 router.route("/paper/getall").get(protect, roles, getall);
 router.route("/paper/getone").get(protect, roles, getone);
-router.route("/paper/download").get(protect, roles, downloadPapers);
+router.route("/paper/download").post(protect, roles, downloadPapers);
 router.route("/user/create").post(protect, roles, create);
 router.route("/user/update").patch(protect, roles, updateuser);
 router.route("/user/getall").get(protect, roles, getalluser);

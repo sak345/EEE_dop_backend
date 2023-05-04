@@ -213,6 +213,7 @@ const dateHelper = (obj ,key) => {
         return ""
     }
 }
+
 exports.downloadPapers = async (req, res, next) => {
     if (!req.body["start_date"] || !req.body["end_date"] || !req.body["status"]){
         return res.status(422).json({
@@ -232,7 +233,18 @@ exports.downloadPapers = async (req, res, next) => {
                     '$lt': end
                 }
             })
-        } else if (req.body["status"] == "submitted") {
+        } else if (req.body["status"] == "rejected") {
+            papers = await Paper.find({
+                'submission_date': {
+                    '$gte': start, 
+                    '$lt': end
+                },
+                'status_p': {
+                    '$eq': "rejected"
+                }
+            })
+        } 
+        else if (req.body["status"] == "submitted") {
             papers = await Paper.find({
                 'submission_date': {
                     '$gte': start, 
