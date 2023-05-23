@@ -24,5 +24,6 @@ exports.login = async(req, res, next) => {
 
 const sendToken = (user, statuscode, res) => {
     const token = user.getSignedToken();
-    res.status(statuscode).json({success: true, token})
+    const role = user.role;
+    res.status(statuscode).json({success: true, token, role})
 }
