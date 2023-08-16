@@ -2,11 +2,11 @@ const Paper = require("../models/Paper");
 
 exports.create = async (req, res, next) => {
     const user = req.user;
-    const {title,coPI, agency_type, PI, submission_date, amount, funding_agency} = req.body;
+    const {title,coPI, agency_type, PI, submission_date, amount, funding_agency, status_p} = req.body;
     let owner = user._id
     try{
         const paper = await Paper.create({
-            title, owner, coPI, agency_type, PI, submission_date, amount, funding_agency,
+            title, owner, coPI, agency_type, PI, submission_date, amount, funding_agency, status_p
         })
         // paper.stringtodate();
         res.status(201).json({
