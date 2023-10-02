@@ -1,9 +1,12 @@
-const mongoose = require('mongoose');
+const mongoose = require('mongoose')
+mongoose.set('strictQuery', false)
 
-const connectDB = async() => {
-    await mongoose.connect(process.env.MONGO_URI)
+const connectDB = async () => {
+  await mongoose.connect(
+    'mongodb+srv://siddjain:EHO5OlsRNscV7WU6@cluster0.88lgmwp.mongodb.net/?retryWrites=true&w=majority'
+  )
 
-    console.log("MongoDB connected");
+  console.log('MongoDB connected')
 }
 
-module.exports = connectDB;
+module.exports = connectDB

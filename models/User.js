@@ -1,4 +1,6 @@
 const mongoose = require('mongoose');
+mongoose.set('strictQuery', false)
+
 const jwt = require("jsonwebtoken");
 
 const UserSchema = new mongoose.Schema({
