@@ -15,6 +15,7 @@ app.use('/api/auth', require('./routes/auth'))
 app.use('/api/private', require('./routes/private'))
 app.use('/api/paper', require('./routes/paper'))
 app.use('/api/admin', require('./routes/admin'))
+app.use('/api/journals', require('./routes/Journal'));
 
 const PORT = process.env.PORT || 5000
 
@@ -22,7 +23,6 @@ const server = app.listen(PORT, () =>
   console.log(`Server is running on http://localhost:${PORT}`)
 )
 
-console.log('hello')
 process.on('unhandledRejection', (err, promise) => {
   console.log(`Logged Error: ${err}`)
   server.close(() => process.exit(1))
