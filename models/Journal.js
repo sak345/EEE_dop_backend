@@ -8,7 +8,7 @@ const JournalSchema = new Schema({
     },
     UniqueId: {
         type: String,
-        unique: true
+        sparse: true
     },
     Level: {
         type: String
@@ -86,7 +86,7 @@ const JournalSchema = new Schema({
         type: Number
     },
     ISSN: {
-        type: Number
+        type: String
     },
     ISBN: {
         type: String
@@ -95,8 +95,7 @@ const JournalSchema = new Schema({
         type: String
     },
     owner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User',
+        type: String,
         required: true
     }
 });

@@ -6,6 +6,6 @@ const { protect } = require('../middleware/auth');
 router.route('/').post(protect, addJournal);
 router.route('/').get(protect, getJournals);
 router.route('/:id').get(getJournal);
-router.route('/:id').delete(deleteJournal);
+router.route('/:_id').delete(protect, deleteJournal);
 
 module.exports = router;

@@ -1,7 +1,6 @@
 const Journal = require('../models/Journal');
 
 exports.getJournals = async (req, res, next) => {
-    console.log("trying to get journals")
     try {
         let query;
         // If user is an admin, return all journals
@@ -25,6 +24,7 @@ exports.getJournals = async (req, res, next) => {
             success: false,
             error: err
         });
+        next(err)
     }
 };
 
@@ -56,31 +56,47 @@ exports.getJournal = async (req, res, next) => {
             success: false,
             error: 'Server Error'
         });
+        next(err)
     }
 };
 
 
 exports.addJournal = async (req, res, next) => {
     try {
-        const journal = await Journal.create({ ...req.body, owner: req.user._id });
+        const promises = req.body.map((journalData) => {
+            return Journal.updateOne(
+                { UniqueId: journalData.UniqueId }, // filter
+                { $set: journalData }, // update
+                { upsert: true } // options
+            ).catch((err) => {
+                if (err.name === 'MongoServerError' && err.code === 11000) {
+                    console.log(`Journal with UniqueId ${journalData.UniqueId} already exists`);
+                } else {
+                    throw err;
+                }
+            });
+        });
+
+        await Promise.all(promises);
 
         res.status(201).json({
             success: true,
-            journal
+            message: 'Journals added/updated successfully'
         });
     } catch (err) {
         res.status(500).json({
             success: false,
             error: 'Server Error'
         });
+        next(err)
     }
 };
 
 exports.deleteJournal = async (req, res, next) => {
     const { _id } = req.params;
-
+    console.log(_id)
     try {
-        const journal = await Journal.findByIdAndDelete(_id);
+        const journal = await Journal.findById(_id);
 
         if (!journal) {
             return res.status(404).json({
@@ -89,15 +105,23 @@ exports.deleteJournal = async (req, res, next) => {
             });
         }
 
+        if (req.user.name !== journal.owner && req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: "You do not have permission to delete this journal"
+            });
+        }
+
+        await Journal.findByIdAndDelete(_id);
+
         res.status(200).json({
             success: true,
             message: "Journal deleted successfully"
         });
     } catch (error) {
-        res.status(500).json({
+        return res.status(500).json({
             success: false,
-            message: "Internal server error",
-            err: error
+            message: "There was some problem deleting"
         });
     }
 };
