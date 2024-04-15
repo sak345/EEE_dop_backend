@@ -8,7 +8,7 @@ exports.getJournals = async (req, res, next) => {
             query = Journal.find();
         } else {
             // If user is a member, only return their own journals
-            query = Journal.find({ owner: req.user._id });
+            query = Journal.find({ owner: req.user.name });
         }
 
         const journals = await query;

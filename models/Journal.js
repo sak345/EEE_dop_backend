@@ -71,10 +71,10 @@ const JournalSchema = new Schema({
         type: String
     },
     B_Page: {
-        type: Number
+        type: String
     },
     P_Page: {
-        type: Number
+        type: String
     },
     SNIP: {
         type: Number
