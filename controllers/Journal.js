@@ -2,14 +2,14 @@ const Journal = require('../models/Journal');
 
 exports.getJournals = async (req, res, next) => {
     try {
-        let query;
-        // If user is an admin, return all journals
-        if (req.user.role === 'admin') {
-            query = Journal.find();
-        } else {
-            // If user is a member, only return their own journals
-            query = Journal.find({ owner: req.user.name });
-        }
+        let query = Journal.find();
+        // // If user is an admin, return all journals
+        // if (req.user.role === 'admin') {
+        //     query = Journal.find();
+        // } else {
+        //     // If user is a member, only return their own journals
+        //     query = Journal.find({ owner: { $regex: new RegExp(`^${req.user.name}$`, 'i') } });
+        // }
 
         const journals = await query;
 

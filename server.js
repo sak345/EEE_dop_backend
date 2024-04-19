@@ -16,6 +16,7 @@ app.use('/api/private', require('./routes/private'))
 app.use('/api/paper', require('./routes/paper'))
 app.use('/api/admin', require('./routes/admin'))
 app.use('/api/journals', require('./routes/Journal'));
+app.use('/api/users', require('./routes/User'));
 
 const PORT = process.env.PORT || 5000
 
