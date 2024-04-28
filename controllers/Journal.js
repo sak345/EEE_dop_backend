@@ -2,17 +2,7 @@ const Journal = require('../models/Journal');
 
 exports.getJournals = async (req, res, next) => {
     try {
-        let query = Journal.find();
-        // // If user is an admin, return all journals
-        // if (req.user.role === 'admin') {
-        //     query = Journal.find();
-        // } else {
-        //     // If user is a member, only return their own journals
-        //     query = Journal.find({ owner: { $regex: new RegExp(`^${req.user.name}$`, 'i') } });
-        // }
-
-        const journals = await query;
-
+        const journals = await Journal.find();
         res.status(200).json({
             success: true,
             count: journals.length,
@@ -94,7 +84,6 @@ exports.addJournal = async (req, res, next) => {
 
 exports.deleteJournal = async (req, res, next) => {
     const { _id } = req.params;
-    console.log(_id)
     try {
         const journal = await Journal.findById(_id);
 
@@ -105,7 +94,7 @@ exports.deleteJournal = async (req, res, next) => {
             });
         }
 
-        if (req.user.name !== journal.owner && req.user.role !== 'admin') {
+        if (req.user.role !== 'admin') {
             return res.status(403).json({
                 success: false,
                 message: "You do not have permission to delete this journal"
