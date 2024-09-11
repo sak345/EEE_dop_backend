@@ -1,7 +1,6 @@
 require('dotenv').config({ path: './config.env' })
 require('dotenv').config()
 const express = require('express')
-const bodyParser = require('body-parser');
 const fileUpload = require('express-fileupload');
 const connectDB = require('./config/db')
 const cors = require('cors')
@@ -25,6 +24,7 @@ app.use('/api/admin', require('./routes/admin'))
 app.use('/api/journals', require('./routes/Journal'));
 app.use('/api/users', require('./routes/User'));
 app.use('/api/awards', require('./routes/awards'))
+app.use('/api/guestLectures', require('./routes/guestLectures'));
 
 const PORT = process.env.PORT || 5000
 

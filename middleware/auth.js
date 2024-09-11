@@ -30,9 +30,9 @@ exports.protect = async (req, res, next) => {
 exports.roles = async (req, res, next) => {
   const { role } = req.user
 
-  if (role == 'admin') {
+  if (role === 'admin') {
     next()
-  } else if (role == 'member') {
+  } else if (role === 'member') {
     return next(
       new ErrorResponse(
         'Not authorized to access this router, Role not adequite',
@@ -40,6 +40,6 @@ exports.roles = async (req, res, next) => {
       )
     )
   } else {
-    return next(new ErrorResponse('Not authorized to access this router', 401))
+    return next(new ErrorResponse('Not authorized to access this routerssss', 401))
   }
 }

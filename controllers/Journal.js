@@ -53,18 +53,28 @@ exports.getJournal = async (req, res, next) => {
 
 exports.addJournal = async (req, res, next) => {
     try {
-        const promises = req.body.map((journalData) => {
-            return Journal.updateOne(
-                { UniqueId: journalData.UniqueId }, // filter
-                { $set: journalData }, // update
-                { upsert: true } // options
-            ).catch((err) => {
+        // Validate that req.body is an array
+        if (!Array.isArray(req.body)) {
+            return res.status(400).json({
+                success: false,
+                error: 'Request body must be an array'
+            });
+        }
+
+        const promises = req.body.map(async (journalData) => {
+            try {
+                return await Journal.updateOne(
+                    { UniqueId: journalData.UniqueId }, // filter
+                    { $set: journalData }, // update
+                    { upsert: true } // options
+                );
+            } catch (err) {
                 if (err.name === 'MongoServerError' && err.code === 11000) {
-                    console.log(`Journal with UniqueId ${journalData.UniqueId} already exists`);
+                    console.log(err)
                 } else {
                     throw err;
                 }
-            });
+            }
         });
 
         await Promise.all(promises);
@@ -74,6 +84,7 @@ exports.addJournal = async (req, res, next) => {
             message: 'Journals added/updated successfully'
         });
     } catch (err) {
+        console.error('Error adding/updating journals:', err);
         res.status(500).json({
             success: false,
             error: 'Server Error'
