@@ -9,7 +9,21 @@ connectDB()
 
 const app = express()
 
-app.use(cors())
+//app.use(cors())
+// Configure CORS
+app.use(cors({
+  origin: 'https://eee-dop-frontend.vercel.app/', //frontend url
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+}));
+
+// Set COOP and CORP Headers
+app.use((req, res, next) => {
+  res.setHeader('Cross-Origin-Opener-Policy', 'cross-origin');
+  res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+  next();
+});
+
 app.use(express.json({ limit: '50mb' }));
 app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.json())
