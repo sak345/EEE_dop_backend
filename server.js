@@ -12,7 +12,7 @@ const app = express()
 //app.use(cors())
 // Configure CORS
 app.use(cors({
-  origin: 'https://eee-dop-frontend.vercel.app/', //frontend url
+  origin: 'https://eee-dop-backend.onrender.com/api/auth/login', //frontend url
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));
