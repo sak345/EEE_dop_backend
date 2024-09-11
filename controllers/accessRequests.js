@@ -67,7 +67,7 @@ const updateAccessRequest = async (req, res) => {
             };
 
             // Ensure BACKEND_URL is defined
-            const backendUrl = process.env.BACKEND_URL || 'https://dop-backend.onrender.com/api/'; // Fallback URL
+            const backendUrl = process.env.BACKEND_URL || 'https://eee-dop-backend.onrender.com/api/'; // Fallback URL
 
 
             // Send the request to the addUser route
