@@ -51,7 +51,7 @@ const updateAccessRequest = async (req, res) => {
         if (status === 'approved') {
             // Send a request to the addUser route to create a new user
             const myHeaders = {
-                "Authorization": req.headers.authorization, // Use the token from the request headers
+                "Authorization": req.headers.authorization,
                 "Content-Type": "application/json"
             };
 
@@ -59,7 +59,7 @@ const updateAccessRequest = async (req, res) => {
                 method: "POST",
                 headers: myHeaders,
                 body: JSON.stringify({
-                    name: accessRequest.name, // Assuming name is available in accessRequest
+                    name: accessRequest.name,
                     email: accessRequest.email,
                     role: role || 'member', // Default role if not provided
                 }),

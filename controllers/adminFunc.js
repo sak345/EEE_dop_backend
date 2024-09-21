@@ -1,4 +1,4 @@
-var {Parser} = require('json2csv');
+var { Parser } = require('json2csv');
 
 const Paper = require("../models/Paper");
 const User = require("../models/User");
@@ -17,7 +17,7 @@ exports.getall = async (req, res, next) => {
                 success: true,
                 papers
             })
-        }   
+        }
     } catch (error) {
         res.status(500).json({
             success: false,
@@ -27,9 +27,9 @@ exports.getall = async (req, res, next) => {
 }
 
 exports.getone = async (req, res, next) => {
-    const {_id} = req.body;
+    const { _id } = req.body;
     try {
-        const paper = await Paper.findOne({_id: _id})
+        const paper = await Paper.findOne({ _id: _id })
         if (!paper) {
             res.status(404).json({
                 success: false,
@@ -50,7 +50,7 @@ exports.getone = async (req, res, next) => {
 }
 
 exports.create = async (req, res, next) => {
-    const {name, email, role} = req.body;
+    const { name, email, role } = req.body;
 
     try {
         const user = await User.create({
@@ -69,7 +69,7 @@ exports.create = async (req, res, next) => {
                 user
             })
         }
-        
+
     } catch (error) {
         res.status(500).json({
             success: false,
@@ -79,8 +79,8 @@ exports.create = async (req, res, next) => {
 }
 
 exports.updateuser = async (req, res, next) => {
-    const {_id, ...other} = req.body;
-    if (req.user._id == _id && other.email ) {
+    const { _id, ...other } = req.body;
+    if (req.user._id == _id && other.email) {
         res.status(404).json({
             success: false,
             message: "Invalid request"
@@ -91,10 +91,10 @@ exports.updateuser = async (req, res, next) => {
             message: "Invalid request"
         })
 
-    }else {
+    } else {
         try {
             const user = await User.findByIdAndUpdate(
-                {_id: _id}, other, {new: true}
+                { _id: _id }, other, { new: true }
             )
             if (!user) {
                 res.status(404).json({
@@ -139,9 +139,9 @@ exports.getalluser = async (req, res, next) => {
 }
 
 exports.getoneuser = async (req, res, next) => {
-    const {_id} = req.body;
+    const { _id } = req.body;
     try {
-        const user = await User.findOne({_id: _id})
+        const user = await User.findOne({ _id: _id })
         if (!user) {
             res.status(404).json({
                 success: false,
@@ -162,15 +162,15 @@ exports.getoneuser = async (req, res, next) => {
 }
 
 exports.deleteuser = async (req, res, next) => {
-    const {_id} = req.body;
+    const { _id } = req.body;
     if (_id != req.user._id) {
         try {
-        const message = await User.findByIdAndDelete(_id)
-        if (message.acknowledged && message.deletedCount == 1) {
-            res.status(200).json({
-                success: true,
-                message: "User deleted successfully"
-            })
+            const message = await User.findByIdAndDelete(_id)
+            if (message.acknowledged && message.deletedCount == 1) {
+                res.status(200).json({
+                    success: true,
+                    message: "User deleted successfully"
+                })
             } else {
                 res.status(404).json({
                     success: false,
@@ -185,14 +185,14 @@ exports.deleteuser = async (req, res, next) => {
         }
     } else {
         res.status(404).json({
-            success:false,
+            success: false,
             message: "Invalid request"
         })
     }
-    
+
 }
 
-const helper = (obj ,key) => {
+const helper = (obj, key) => {
     if (obj[key]) {
         return obj[key]
     }
@@ -201,143 +201,91 @@ const helper = (obj ,key) => {
     }
 }
 
-const dateHelper = (obj ,key) => {
+const dateHelper = (obj, key) => {
     if (obj[key]) {
-        date = new Date(obj[key])
+        const date = new Date(obj[key]);
         const yyyy = date.getFullYear();
-        let mm = date.getMonth() + 1; 
-        let dd = date.getDate();
-        return (yyyy + "-"+ mm + "-"+ dd)
-    }
-    else {
-        return ""
+        let mm = String(date.getMonth() + 1).padStart(2, '0'); // Ensure two digits
+        let dd = String(date.getDate()).padStart(2, '0'); // Ensure two digits
+        return `${yyyy}/${mm}/${dd}`;
+    } else {
+        return "";
     }
 }
 
 exports.downloadPapers = async (req, res, next) => {
-    if (!req.body["start_date"] || !req.body["end_date"] || !req.body["status"]){
+    if (!req.body["start_date"] || !req.body["end_date"] || !req.body["status"]) {
         return res.status(422).json({
-                success: false,
-                message: "No start_date or end_date or status found"
-            })
+            success: false,
+            message: "No start_date or end_date or status found"
+        })
     }
-    start = new Date(req.body["start_date"])
-    end = new Date(req.body["end_date"])
+    const start = new Date(req.body["start_date"]);
+    const end = new Date(req.body["end_date"]);
+
     try {
-        results = []
-        papers = null
-        if (req.body["status"] == "all") {
-            papers = await Paper.find({
-                'submission_date': {
-                    '$gte': start, 
-                    '$lt': end
-                }
-            })
-        } else if (req.body["status"] == "rejected") {
-            papers = await Paper.find({
-                'submission_date': {
-                    '$gte': start, 
-                    '$lt': end
-                },
-                'status_p': {
-                    '$eq': "rejected"
-                }
-            })
-        } 
-        else if (req.body["status"] == "submitted") {
-            papers = await Paper.find({
-                'submission_date': {
-                    '$gte': start, 
-                    '$lt': end
-                },
-                'status_p': {
-                    '$eq': "submitted"
-                }
-            })
-        } else if(req.body["status"] == "accepted") {
-            papers = await Paper.find({
-                'submission_date': {
-                    '$gte': start, 
-                    '$lt': end
-                },
-                'status_p': {
-                    '$eq': "accepted"
-                }
-            })
-        } else if(req.body["status"] == "completed") {
-             papers = await Paper.find({
-                'submission_date': {
-                    '$gte': start, 
-                    '$lt': end
-                },
-                'status_p': {
-                    '$eq': "completed"
-                }
-            })
-        } else if(req.body["status"] == "ongoing") {
-             papers = await Paper.find({
-                'submission_date': {
-                    '$gte': start, 
-                    '$lt': end
-                },
-                'status_p': {
-                    '$eq': "ongoing"
-                }
-            })
-        } 
-        else {
-            return res.status(422).json({
-                success: false,
-                message: "status can only be submitted, accepted, ongoing or completed"
-            })
+        let papers = [];
+        const status = req.body["status"];
+
+        const query = {
+            'submission_date': {
+                '$gte': start,
+                '$lt': end
+            }
+        };
+
+        if (status !== "all") {
+            query['status_p'] = status;
         }
 
-        papers.forEach((paper) => {
-            let row = {
-                "title": helper(paper, "title"),
-                "funding_agency": helper(paper, "funding_agency"),
-                "agency_type": helper(paper, "agency_type"),
-                "PI": helper(paper, "PI"),
-                "coPI": helper(paper, "coPI"),
-                "amount": helper(paper, "amount"),
-                "submission_date": dateHelper(paper, "submission_date"),
-                "end_date": dateHelper(paper, "end_date"),
-                "status_p": helper(paper, "status_p"),
-                "start_date": dateHelper(paper, "start_date"),
-                "completed_date": dateHelper(paper, "completed_date")
-            }
-            results.push(row)
-        })
-
-        const fields = [ "title",
-                "funding_agency",
-                "agency_type",
-                "PI",
-                "coPI",
-                "amount",
-                "submission_date",
-                "end_date",
-                "status_p",
-                "start_date",
-                "completed_date"]
-
-        const csvParser = new Parser({fields})
-        const csvData = csvParser.parse(results)
+        papers = await Paper.find(query);
 
         if (!papers.length) {
-            return res.status(404).json({
+            return res.json({
                 success: false,
                 message: "No paper Found"
-            })
-        } else {
-            res.setHeader("Content-Type", "text/csv");
-            res.setHeader("Content-Disposition", "attachment: filename=papers.csv");
-            return res.status(200).end(csvData)
-        }   
+            });
+        }
+
+        const results = papers.map(paper => ({
+            "title": helper(paper, "title"),
+            "funding_agency": helper(paper, "funding_agency"),
+            "agency_type": helper(paper, "agency_type"),
+            "PI": helper(paper, "PI"),
+            "coPI": helper(paper, "coPI"),
+            "amount": helper(paper, "amount"),
+            "submission_date": dateHelper(paper, "submission_date"),
+            "end_date": dateHelper(paper, "end_date"),
+            "status_p": helper(paper, "status_p"),
+            "start_date": dateHelper(paper, "start_date"),
+            "completed_date": dateHelper(paper, "completed_date")
+        }));
+
+        const fields = [
+            "title",
+            "funding_agency",
+            "agency_type",
+            "PI",
+            "coPI",
+            "amount",
+            "submission_date",
+            "end_date",
+            "status_p",
+            "start_date",
+            "completed_date"
+        ];
+
+        const csvParser = new Parser({ fields });
+        const csvData = csvParser.parse(results);
+
+        res.setHeader("Content-Type", "text/csv");
+        res.setHeader("Content-Disposition", "attachment; filename=papers.csv");
+        return res.status(200).end(csvData);
     } catch (error) {
         return res.status(500).json({
             success: false,
-            err: error
-        })
+            err: error.message
+        });
     }
+
 }

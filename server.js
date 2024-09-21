@@ -9,10 +9,10 @@ connectDB()
 
 const app = express()
 
-//app.use(cors())
-// Configure CORS
+// app.use(cors()) //for development
+// Configure CORS for production
 app.use(cors({
-  origin: 'https://eee-dop-frontend.vercel.app', //frontend url
+  origin: 'https://eee-dop-frontend.vercel.app', // Replace with your frontend URL
   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
   credentials: true,
 }));

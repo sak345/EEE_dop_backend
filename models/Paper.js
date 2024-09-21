@@ -38,9 +38,7 @@ const PaperSchema = new mongoose.Schema({
   },
   status_p: {
     type: String,
-    required: [true, 'Please provide a status'],
   },
-
   approved_date: {
     type: Date,
   },
